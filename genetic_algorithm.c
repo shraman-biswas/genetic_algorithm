@@ -218,9 +218,9 @@ genome_t *ga_run(pop_t *const pop, const int num_gen)
 {
 	int i;
 	for (i=0; i<num_gen; ++i) {
+		ga_epoch(pop);
 		printf("\rbest:   [ %s ] error: %d generation: %d",
 			pop->best->wts, pop->best->err, i+1);
-		ga_epoch(pop);
 		if (pop->found == true) {				/* termination condition */
 			return pop->best;
 		}

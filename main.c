@@ -32,7 +32,6 @@ int main(void)
 	/* check if genome was found */
 	if (best != NULL) {
 		printf("\ngenome found!\n");
-		disp_genome(pop, best);
 	} else {
 		printf("\ngenome not found!\n")	;
 	}
