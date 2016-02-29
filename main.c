@@ -15,7 +15,7 @@ int main(void)
 	/* genetic algorithm parameters */
 	num_gen = 100000;							/* number of generations */
 	gene_cnt = SIZE(target) - 1;				/* number of genes */
-	size = 10;									/* population size */
+	size = 20;									/* population size */
 	c_rate = 0.9;								/* crossover rate */
 	m_rate = 0.1;								/* mutation rate */
 	tourn_size = 3;								/* tournament size */
