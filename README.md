@@ -2,7 +2,7 @@ Genetic Algorithm
 =================
 
 Genetic algorithm implementation.  
-Evloves the fittest genome that matches the target string perfectly.  
+Evolves the fittest genome that matches the target string perfectly.  
 Features:
 * genetic algorithm creation
 * genetic algorithm destruction
