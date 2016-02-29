@@ -9,18 +9,20 @@
 #define UPPER 90
 #define LOWER 65
 
+/* genome structure */
 typedef struct __genome_t {
 	unsigned int err;
 	char *wts;
 } genome_t;
 
+/* population structure */
 typedef struct __pop_t{
 	bool done;
 	int size, gene_cnt, tourn_size;
 	float c_rate, m_rate;
 	char *pwt1, *pwt2, *cwt1, *cwt2;
 	const char *target;
-	genome_t *pool;
+	genome_t *pool, *best;
 } pop_t;
 
 pop_t *ga_create(
@@ -32,6 +34,7 @@ pop_t *ga_create(
 	const int tourn_size);
 void ga_destroy(pop_t *const pop);
 void ga_epoch(pop_t *const pop);
-bool ga_run(pop_t *const pop, const int num_gen);
+genome_t *ga_run(pop_t *const pop, const int num_gen);
+void disp_genome(const pop_t *const pop, const genome_t *const g);
 
 #endif

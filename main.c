@@ -6,9 +6,9 @@ int main()
 
 	const char target[] = "SHRAMAN";
 
-	bool found=false;
 	int num_gen, gene_cnt, size, tourn_size;
 	double c_rate, m_rate;
+	genome_t *best=NULL;
 	pop_t *pop=NULL;
 
 	/* genetic algorithm parameters */
@@ -23,11 +23,15 @@ int main()
 	pop = ga_create(target, gene_cnt, size, c_rate, m_rate, tourn_size);
 
 	/* apply genetic algorithm */
-	found = ga_run(pop, num_gen);
+	best = ga_run(pop, num_gen);
 
 	/* check if genome was found */
-	if (found == false)
-		printf("\ngenome not found!\n");
+	if (best != NULL) {
+		printf("\ngenome found!\n");
+		disp_genome(pop, best);
+	} else {
+		printf("\ngenome not found!\n")	;
+	}
 
 	/* destroy genetic algorithm population */
 	ga_destroy(pop);

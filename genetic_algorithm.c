@@ -6,16 +6,6 @@ const int sign[] = {-1, 1};
 /* internal genetic algorithm functions                                      */
 /*---------------------------------------------------------------------------*/
 
-/* display genome string and error value */
-static void disp_genome(const pop_t *const pop, const genome_t *const g)
-{
-	int i;
-	for (i=0; i< pop->gene_cnt-1; ++i)
-		printf("%c-", g->wts[i]);
-	printf("%c ", g->wts[i]);
-	printf("error: %d\n", g->err);
-}
-
 /* compare 2 genomes and return fittest genome with least error */
 static int cmp_genome(const void *a, const void *b)
 {
@@ -25,20 +15,28 @@ static int cmp_genome(const void *a, const void *b)
 	return g1->err - g2->err;
 }
 
+/* store the best genome with least error */
+static void best_genome(const pop_t *const pop, const genome_t *const g)
+{
+	int i;
+	for (i=0; i < pop->gene_cnt; ++i)
+		pop->best->wts[i] = g->wts[i];
+	pop->best->err = g->err;
+}
+
 /* calculate error of entire population */
 static void pop_error(pop_t *const pop)
 {
 	int i, j, err_gene;
-	for (i=0; i< pop->size; ++i) {
+	for (i=0; i < pop->size; ++i) {
 		pop->pool[i].err = 0;
-		for (j=0; j< pop->gene_cnt; ++j) {
+		for (j=0; j < pop->gene_cnt; ++j) {
 			err_gene = pop->pool[i].wts[j] - pop->target[j];
 			pop->pool[i].err += err_gene * err_gene;
 		}
 		if (pop->pool[i].err == 0) {
+			best_genome(pop, &pop->pool[i]);
 			pop->done = true;
-			printf("\ngenome found!\n");
-			disp_genome(pop, &pop->pool[i]);
 			break;
 		}
 	}
@@ -54,7 +52,7 @@ static void crossover(
 {
 	int i, cross_pt;
 	if ((float)rand() / (float)RAND_MAX > pop->c_rate) {
-		for (i=0; i< pop->gene_cnt; ++i) {
+		for (i=0; i < pop->gene_cnt; ++i) {
 			cwt1[i] = pwt1[i];
 			cwt2[i] = pwt2[i];
 		}
@@ -75,7 +73,7 @@ static void crossover(
 static void mutate(const pop_t *const pop, char *const wt)
 {
 	int i;
-	for (i=0; i< pop->gene_cnt; ++i) {
+	for (i=0; i < pop->gene_cnt; ++i) {
 		if ((float)rand() / (float)RAND_MAX > pop->m_rate)
 			continue;
 		if ((LOWER < wt[i]) && (wt[i] < UPPER)) {
@@ -103,7 +101,7 @@ static void tourn_select(
 		p1 = p2;
 		p2 = tmp;
 	}
-	for (i=0; i< pop->tourn_size-2; ++i) {
+	for (i=0; i < pop->tourn_size-2; ++i) {
 		tmp = &pop->pool[rand() % pop->size];
 		if (tmp->err < p1->err) {
 			p1 = tmp;
@@ -111,7 +109,7 @@ static void tourn_select(
 			p2 = tmp;
 		}
 	}
-	for (i=0; i< pop->gene_cnt; ++i) {
+	for (i=0; i < pop->gene_cnt; ++i) {
 		pwt1[i] = p1->wts[i];
 		pwt2[i] = p2->wts[i];
 	}
@@ -124,7 +122,9 @@ static void init(pop_t *const pop)
 	pop->pwt2 = (char *)calloc(pop->gene_cnt, sizeof(char));
 	pop->cwt1 = (char *)calloc(pop->gene_cnt, sizeof(char));
 	pop->cwt2 = (char *)calloc(pop->gene_cnt, sizeof(char));
-	pop->pool = (genome_t *)calloc(pop->size, sizeof(genome_t));	
+	pop->pool = (genome_t *)calloc(pop->size, sizeof(genome_t));
+	pop->best = (genome_t *)malloc(sizeof(genome_t));
+	pop->best->wts = (char *)calloc(pop->gene_cnt, sizeof(char));	
 }
 
 /*---------------------------------------------------------------------------*/
@@ -210,14 +210,28 @@ void ga_epoch(pop_t *const pop)
 }
 
 /* run genetic algorithm for several generations */
-bool ga_run(pop_t *const pop, const int num_gen)
+genome_t *ga_run(pop_t *const pop, const int num_gen)
 {
 	int i;
 	for (i=0; i<num_gen; ++i) {
 		printf("\rgeneration: %d", i+1);
 		ga_epoch(pop);
 		if (pop->done == 1)						/* termination condition */
-			return true;
+			return pop->best;
 	}
-	return false;
+	return NULL;
+}
+
+/*---------------------------------------------------------------------------*/
+/* external genetic algorithm helper functions                               */
+/*---------------------------------------------------------------------------*/
+
+/* display genome string and error value */
+void disp_genome(const pop_t *const pop, const genome_t *const g)
+{
+	int i;
+	for (i=0; i< pop->gene_cnt-1; ++i)
+		printf("%c-", g->wts[i]);
+	printf("%c ", g->wts[i]);
+	printf("error: %d\n", g->err);
 }
