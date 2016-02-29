@@ -1,10 +1,11 @@
 #include "main.h"
 
-int main()
+int main(void)
 {
 	printf("[ genetic algorithm ]\n");
 
-	const char target[] = "SHRAMAN";
+	/* target string */
+	const char target[] = "Shraman Biswas";
 
 	int num_gen, gene_cnt, size, tourn_size;
 	double c_rate, m_rate;
@@ -12,12 +13,15 @@ int main()
 	pop_t *pop=NULL;
 
 	/* genetic algorithm parameters */
-	num_gen = 10000;							/* number of generations */
+	num_gen = 100000;							/* number of generations */
 	gene_cnt = SIZE(target) - 1;				/* number of genes */
 	size = 10;									/* population size */
 	c_rate = 0.9;								/* crossover rate */
 	m_rate = 0.1;								/* mutation rate */
 	tourn_size = 3;								/* tournament size */
+
+	/* display target string */
+	printf("target: [ %s ]\n", target);
 
 	/* create genetic algorithm and obtain population */
 	pop = ga_create(target, gene_cnt, size, c_rate, m_rate, tourn_size);

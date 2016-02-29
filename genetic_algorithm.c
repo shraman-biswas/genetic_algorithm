@@ -1,12 +1,10 @@
 #include "genetic_algorithm.h"
 
-const int sign[] = {-1, 1};
-
 /*---------------------------------------------------------------------------*/
 /* internal genetic algorithm functions                                      */
 /*---------------------------------------------------------------------------*/
 
-/* compare 2 genomes and return fittest genome with least error */
+/* compare 2 genomes and return fitter genome with lower error */
 static int cmp_genome(const void *a, const void *b)
 {
 	const genome_t *g1=NULL, *g2=NULL;
@@ -15,7 +13,7 @@ static int cmp_genome(const void *a, const void *b)
 	return g1->err - g2->err;
 }
 
-/* store the best genome with least error */
+/* store best genome with least error */
 static void best_genome(const pop_t *const pop, const genome_t *const g)
 {
 	int i;
@@ -24,22 +22,28 @@ static void best_genome(const pop_t *const pop, const genome_t *const g)
 	pop->best->err = g->err;
 }
 
-/* calculate error of entire population */
+/* calculate error of entire population and determine fittest genome */
 static void pop_error(pop_t *const pop)
 {
-	int i, j, err_gene;
+	int i, j, err_gene, err_min=INT_MAX;
+	genome_t *g=NULL;
 	for (i=0; i < pop->size; ++i) {
 		pop->pool[i].err = 0;
 		for (j=0; j < pop->gene_cnt; ++j) {
 			err_gene = pop->pool[i].wts[j] - pop->target[j];
 			pop->pool[i].err += err_gene * err_gene;
 		}
-		if (pop->pool[i].err == 0) {
-			best_genome(pop, &pop->pool[i]);
-			pop->done = true;
-			break;
+		if (pop->pool[i].err <= err_min) {
+			g = &pop->pool[i];
+			if (pop->pool[i].err == 0) {
+				best_genome(pop, g);
+				pop->found = true;
+				return;
+			}
+			err_min = pop->pool[i].err;
 		}
 	}
+	best_genome(pop, g);
 }
 
 /* crossover 2 parents to produce 2 children */
@@ -146,7 +150,7 @@ pop_t *ga_create(
 		perror("population could not be created!");
 		exit(EXIT_FAILURE);
 	}
-	pop->done = false;
+	pop->found = false;
 	/* get parameters */
 	pop->target = target;						/* target string */
 	pop->gene_cnt = gene_cnt;					/* number of genes */
@@ -214,10 +218,12 @@ genome_t *ga_run(pop_t *const pop, const int num_gen)
 {
 	int i;
 	for (i=0; i<num_gen; ++i) {
-		printf("\rgeneration: %d", i+1);
+		printf("\rbest:   [ %s ] error: %d generation: %d",
+			pop->best->wts, pop->best->err, i+1);
 		ga_epoch(pop);
-		if (pop->done == 1)						/* termination condition */
+		if (pop->found == true) {				/* termination condition */
 			return pop->best;
+		}
 	}
 	return NULL;
 }
@@ -227,11 +233,7 @@ genome_t *ga_run(pop_t *const pop, const int num_gen)
 /*---------------------------------------------------------------------------*/
 
 /* display genome string and error value */
-void disp_genome(const pop_t *const pop, const genome_t *const g)
+inline void disp_genome(const pop_t *const pop, const genome_t *const g)
 {
-	int i;
-	for (i=0; i< pop->gene_cnt-1; ++i)
-		printf("%c-", g->wts[i]);
-	printf("%c ", g->wts[i]);
-	printf("error: %d\n", g->err);
+	printf("genome: [ %s ] error: %d\n", g->wts, g->err);
 }

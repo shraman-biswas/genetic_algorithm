@@ -1,13 +1,15 @@
 #ifndef GENETIC_ALGORITHM_H
 #define GENETIC_ALGORITHM_H
 
+#include <limits.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-#define UPPER 90
-#define LOWER 65
+/* upper and lower ascii character limts */
+#define UPPER 126
+#define LOWER 32
 
 /* genome structure */
 typedef struct __genome_t {
@@ -17,13 +19,16 @@ typedef struct __genome_t {
 
 /* population structure */
 typedef struct __pop_t{
-	bool done;
+	bool found;
 	int size, gene_cnt, tourn_size;
 	float c_rate, m_rate;
 	char *pwt1, *pwt2, *cwt1, *cwt2;
 	const char *target;
 	genome_t *pool, *best;
 } pop_t;
+
+/* sign table for mutation operation */
+static const int sign[] = {-1, 1};
 
 pop_t *ga_create(
 	const char *target,
