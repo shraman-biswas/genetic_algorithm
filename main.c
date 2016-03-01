@@ -26,10 +26,10 @@ int main(void)
 	/* create genetic algorithm and obtain population */
 	pop = ga_create(target, gene_cnt, size, c_rate, m_rate, tourn_size);
 
-	/* apply genetic algorithm */
+	/* apply genetic algorithm and obtain best genome if found */
 	best = ga_run(pop, num_gen);
 
-	/* check if genome was found */
+	/* check if best genome was found */
 	if (best != NULL) {
 		printf("\ngenome found!\n");
 	} else {
