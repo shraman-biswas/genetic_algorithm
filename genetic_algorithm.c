@@ -95,7 +95,7 @@ static void crossover(
 	char *const cwt2)
 {
 	int i, cross_pt;
-	/* return parents if crossover probabilty does not suffice */
+	/* return parents if crossover rate probabilty does not suffice */
 	if ((float)rand() / (float)RAND_MAX > pop->c_rate) {
 		for (i=0; i < pop->gene_cnt; ++i) {
 			cwt1[i] = pwt1[i];
@@ -111,7 +111,7 @@ static void crossover(
 		cwt2[i] = pwt2[i];
 	}
 	/* swap genes from crossover point from parents to children */
-	for (i=cross_pt; i< pop->gene_cnt; ++i) {
+	for (i=cross_pt; i < pop->gene_cnt; ++i) {
 		cwt1[i] = pwt2[i];
 		cwt2[i] = pwt1[i];
 	}
@@ -126,7 +126,7 @@ static void mutate(const pop_t *const pop, char *const wt)
 		/* skip gene if mutation rate probability does not suffice */
 		if ((float)rand() / (float)RAND_MAX > pop->m_rate)
 			continue;
-		/* check gene mutation bounds */
+		/* check gene mutation bounds and apply mutation */
 		if ((LOWER < wt[i]) && (wt[i] < UPPER)) {
 			wt[i] += sign[rand() % 2];
 		} else if (wt[i] <= LOWER) {
@@ -140,12 +140,16 @@ static void mutate(const pop_t *const pop, char *const wt)
 /* allocate memory for genetic algorithm */
 static void init(pop_t *const pop)
 {
+	/* allocate memory for parents and children genes */
 	pop->pwt1 = (char *)calloc(pop->gene_cnt, sizeof(char));
 	pop->pwt2 = (char *)calloc(pop->gene_cnt, sizeof(char));
 	pop->cwt1 = (char *)calloc(pop->gene_cnt, sizeof(char));
 	pop->cwt2 = (char *)calloc(pop->gene_cnt, sizeof(char));
+	/* allocate memory for population pool */
 	pop->pool = (genome_t *)calloc(pop->size, sizeof(genome_t));
+	/* allocate memory for best genome */
 	pop->best = (genome_t *)malloc(sizeof(genome_t));
+	/* allocate memory for best genome genes */
 	pop->best->wts = (char *)calloc(pop->gene_cnt, sizeof(char));
 }
 
@@ -182,9 +186,9 @@ pop_t *ga_create(
 	init(pop);
 	/* initialize random number generator */
 	srand(time(NULL));
-	/* create entire population */
+	/* create entire population pool */
 	for (i=0; i<size; ++i) {
-		/* create each genome */
+		/* create genes of each genome */
 		pop->pool[i].wts = (char *)calloc(gene_cnt, sizeof(char));
 		for (j=0; j<gene_cnt; ++j)
 			/* initialize each genome with random gene values */
@@ -213,12 +217,12 @@ void ga_epoch(pop_t *const pop)
 {
 	char *wts[pop->size];
 	int i, j;
-	/* create new population pool */
+	/* create new temporary population pool */
 	for (i=0; i < pop->size; ++i)
 		wts[i] = (char *)calloc(pop->size, sizeof(char));
 	/* calculate error of current population and determine fittest genome */
 	pop_error(pop);
-	/* sort current population pool in descending order of fitness */
+	/* sort current population pool in ascending order of error */
 	qsort(pop->pool, pop->size, sizeof(genome_t), cmp_genome);
 	/* loop over current population pool in steps of 2 */
 	for (i=0; i < pop->size; i+=2) {
@@ -229,17 +233,17 @@ void ga_epoch(pop_t *const pop)
 		/* mutate both children */
 		mutate(pop, pop->cwt1);
 		mutate(pop, pop->cwt2);
-		/* copy children genomes into population pool */
+		/* copy children genomes into temporary population pool */
 		for (j=0; j < pop->gene_cnt; ++j) {
 			wts[i][j] = pop->cwt1[j];
 			wts[i+1][j] = pop->cwt2[j];
 		}
 	}
-	/* copy current population pool into new population pool */
+	/* copy temporary population pool into current population pool */
 	for (i=0; i < pop->size; ++i) {
 		for (j=0; j < pop->gene_cnt; ++j)
 			pop->pool[i].wts[j] = wts[i][j];
-		/* free current population pool genomes */
+		/* free temporary population pool genomes */
 		free(wts[i]);
 	}
 }
@@ -250,7 +254,7 @@ genome_t *ga_run(pop_t *const pop, const unsigned int num_gen)
 	int i;
 	/* loop over all generations */
 	for (i=0; i<num_gen; ++i) {
-		/* run genetic algorithmfor 1 generation */
+		/* run genetic algorithm for 1 generation */
 		ga_epoch(pop);
 		/* display current best genome and error */
 		printf("\rbest:   [ %s ] error: %d generation: %d",
