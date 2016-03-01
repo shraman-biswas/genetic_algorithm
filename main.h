@@ -6,6 +6,7 @@
 
 #include "genetic_algorithm.h"
 
+/* array size macro */
 #define SIZE(x) (sizeof(x) / sizeof(*(x)))
 
 #endif
