@@ -4,7 +4,7 @@
 /* internal genetic algorithm functions                                       */
 /*----------------------------------------------------------------------------*/
 
-/* compare 2 genomes and return fitter genome with lower error */
+/* compare 2 genomes for qsort algorithm */
 static int cmp_genome(const void *a, const void *b)
 {
 	const genome_t *g1=NULL, *g2=NULL;
