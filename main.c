@@ -7,18 +7,18 @@ int main(void)
 	/* target string */
 	const char target[] = "Shraman Biswas";
 
-	int num_gen, gene_cnt, size, tourn_size;
+	unsigned int num_gen, gene_cnt, size, tourn_size;
 	double c_rate, m_rate;
 	genome_t *best=NULL;
 	pop_t *pop=NULL;
 
 	/* genetic algorithm parameters */
-	num_gen = 100000;							/* number of generations */
-	gene_cnt = SIZE(target) - 1;				/* number of genes */
-	size = 20;									/* population size */
-	c_rate = 0.9;								/* crossover rate */
-	m_rate = 0.1;								/* mutation rate */
-	tourn_size = 3;								/* tournament size */
+	num_gen = 100000;			/* number of generations */
+	gene_cnt = SIZE(target) - 1;		/* number of genes */
+	size = 20;				/* population size */
+	c_rate = 0.9;				/* crossover rate */
+	m_rate = 0.1;				/* mutation rate */
+	tourn_size = 3;				/* tournament size */
 
 	/* display target string */
 	printf("target: [ %s ]\n", target);

@@ -20,7 +20,7 @@ typedef struct __genome_t {
 /* population structure */
 typedef struct __pop_t{
 	bool found;
-	int size, gene_cnt, tourn_size;
+	unsigned int size, gene_cnt, tourn_size;
 	float c_rate, m_rate;
 	char *pwt1, *pwt2, *cwt1, *cwt2;
 	const char *target;
@@ -32,14 +32,14 @@ static const int sign[] = {-1, 1};
 
 pop_t *ga_create(
 	const char *target,
-	const int gene_cnt,
-	const int size,
+	const unsigned int gene_cnt,
+	const unsigned int size,
 	const double c_rate,
  	const double m_rate,
-	const int tourn_size);
+	const unsigned int tourn_size);
 void ga_destroy(pop_t *const pop);
 void ga_epoch(pop_t *const pop);
-genome_t *ga_run(pop_t *const pop, const int num_gen);
+genome_t *ga_run(pop_t *const pop, const unsigned int num_gen);
 void disp_genome(const pop_t *const pop, const genome_t *const g);
 
 #endif
