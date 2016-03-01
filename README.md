@@ -7,6 +7,13 @@ Uses simple crossover operation that swaps parent genes at a randomly generated 
 Uses simple mutation operation that increments or decrements character in genome string.   
 Uses tournament selection to select 2 fit parents from entire population pool.
 
+Features:
+* genetic algorithm creation
+* genetic algorithm destruction
+* genetic algorithm epoch
+* genetic algorithm run
+* display genome helper function
+
 Parameters:
 * target string
 * number of genes in each genome (length of target string)
@@ -14,10 +21,3 @@ Parameters:
 * crossover rate
 * mutation rate
 * tournament selection size
-
-Features:
-* genetic algorithm creation
-* genetic algorithm destruction
-* genetic algorithm epoch
-* genetic algorithm run
-* display genome helper function
