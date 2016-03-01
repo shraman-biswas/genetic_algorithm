@@ -5,7 +5,16 @@ Genetic algorithm implementation with tournament selection.
 Performs basic string matching. Evolves the fittest genome string that matches the target string perfectly.  
 Uses simple crossover operation that swaps parent genes at a randomly generated crossover point.  
 Uses simple mutation operation that increments or decrements character in genome string.   
-Uses tournament selection to select 2 fit parents from entire population pool.  
+Uses tournament selection to select 2 fit parents from entire population pool.
+
+Parameters:
+* target string
+* number of genes in each genome (length of target string)
+* number of genomes (population size)
+* crossover rate
+* mutation rate
+* tournament selection size
+
 Features:
 * genetic algorithm creation
 * genetic algorithm destruction
